@@ -6,6 +6,7 @@ import 'package:ditonton/common/failure.dart';
 import 'package:ditonton/data/datasources/movie_local_data_source.dart';
 import 'package:ditonton/data/datasources/movie_remote_data_source.dart';
 import 'package:ditonton/data/models/movie_table.dart';
+import 'package:ditonton/data/models/tv_table.dart';
 import 'package:ditonton/domain/entities/movie.dart';
 import 'package:ditonton/domain/entities/movie_detail.dart';
 import 'package:ditonton/domain/entities/tv.dart';
@@ -199,5 +200,41 @@ class MovieRepositoryImpl implements MovieRepository {
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> saveWatchlistTv(TvDetail tvDetail) async {
+    try {
+      final result =
+          await localDataSource.insertWatchlistTv(TvTable.fromEntity(tvDetail));
+      return Right(result);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> removeWatchlistTv(TvDetail tvDetail) async {
+    try {
+      final result =
+          await localDataSource.removeWatchlistTv(TvTable.fromEntity(tvDetail));
+      return Right(result);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
+  @override
+  Future<bool> isAddedToWatchlistTv(int id) async {
+    final result = await localDataSource.getTvById(id);
+    return result != null;
+  }
+
+  @override
+  Future<Either<Failure, List<Tv>>> getWatchlistTv() async {
+    final result = await localDataSource.getWatchlistTv();
+    return Right(result.map((data) => data.toEntity()).toList());
   }
 }

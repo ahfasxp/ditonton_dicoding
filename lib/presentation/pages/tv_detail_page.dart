@@ -26,6 +26,8 @@ class _TvDetailPageState extends State<TvDetailPage> {
     Future.microtask(() {
       Provider.of<TvDetailNotifier>(context, listen: false)
           .fetchTvDetail(widget.id);
+      Provider.of<TvDetailNotifier>(context, listen: false)
+          .loadWatchlistStatusTv(widget.id);
     });
   }
 
@@ -44,7 +46,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
               child: DetailContent(
                 tv,
                 provider.tvRecommendations,
-                false,
+                provider.isAddedToWatchlist,
               ),
             );
           } else {
@@ -104,7 +106,40 @@ class DetailContent extends StatelessWidget {
                               style: kHeading5,
                             ),
                             ElevatedButton(
-                              onPressed: () async {},
+                              onPressed: () async {
+                                if (!isAddedWatchlist) {
+                                  await Provider.of<TvDetailNotifier>(context,
+                                          listen: false)
+                                      .addWatchlistTv(tv);
+                                } else {
+                                  await Provider.of<TvDetailNotifier>(context,
+                                          listen: false)
+                                      .removeFromWatchlistTv(tv);
+                                }
+
+                                final message = Provider.of<TvDetailNotifier>(
+                                        context,
+                                        listen: false)
+                                    .watchlistMessage;
+
+                                if (message ==
+                                        TvDetailNotifier
+                                            .watchlistAddSuccessMessage ||
+                                    message ==
+                                        TvDetailNotifier
+                                            .watchlistRemoveSuccessMessage) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)));
+                                } else {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          content: Text(message),
+                                        );
+                                      });
+                                }
+                              },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
