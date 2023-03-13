@@ -351,5 +351,34 @@ void main() {
     });
   });
 
-  // TODO: test for search tv yet, do it here
+  group('search tv', () {
+    final tSearchResult =
+        TvResponse.fromJson(json.decode(readJson('dummy_data/on_air_tv.json')))
+            .tvList;
+    final tQuery = 'Pretty Little Liars';
+
+    test('should return list of tv when response code is 200', () async {
+      // arrange
+      when(mockHttpClient
+              .get(Uri.parse('$BASE_URL/search/tv?$API_KEY&query=$tQuery')))
+          .thenAnswer((_) async =>
+              http.Response(readJson('dummy_data/on_air_tv.json'), 200));
+      // act
+      final result = await dataSource.searchTv(tQuery);
+      // assert
+      expect(result, tSearchResult);
+    });
+
+    test('should throw ServerException when response code is other than 200',
+        () async {
+      // arrange
+      when(mockHttpClient
+              .get(Uri.parse('$BASE_URL/search/tv?$API_KEY&query=$tQuery')))
+          .thenAnswer((_) async => http.Response('Not Found', 404));
+      // act
+      final call = dataSource.searchTv(tQuery);
+      // assert
+      expect(() => call, throwsA(isA<ServerException>()));
+    });
+  });
 }
