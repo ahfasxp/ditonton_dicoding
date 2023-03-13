@@ -4,6 +4,7 @@ import 'package:ditonton/injection.dart' as di;
 import 'package:ditonton/presentation/pages/about_page.dart';
 import 'package:ditonton/presentation/pages/home_movie_page.dart';
 import 'package:ditonton/presentation/pages/movie_detail_page.dart';
+import 'package:ditonton/presentation/pages/on_air_tv_page.dart';
 import 'package:ditonton/presentation/pages/popular_movies_page.dart';
 import 'package:ditonton/presentation/pages/popular_tv_page.dart';
 import 'package:ditonton/presentation/pages/search_page.dart';
@@ -15,6 +16,7 @@ import 'package:ditonton/presentation/pages/watchlist_movies_page.dart';
 import 'package:ditonton/presentation/provider/movie_detail_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_search_notifier.dart';
+import 'package:ditonton/presentation/provider/on_air_tv_notifier.dart';
 import 'package:ditonton/presentation/provider/popular_movies_notifier.dart';
 import 'package:ditonton/presentation/provider/popular_tv_notifier.dart';
 import 'package:ditonton/presentation/provider/top_rated_movies_notifier.dart';
@@ -58,6 +60,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => di.locator<TvListNotifier>(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => di.locator<OnAirTvNotifier>(),
         ),
         ChangeNotifierProvider(
           create: (_) => di.locator<PopularTvNotifier>(),
@@ -111,6 +116,8 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(builder: (_) => AboutPage());
             case SeriesPage.ROUTE_NAME:
               return MaterialPageRoute(builder: (_) => SeriesPage());
+            case OnAirTvPage.ROUTE_NAME:
+              return MaterialPageRoute(builder: (_) => OnAirTvPage());
             case PopularTvPage.ROUTE_NAME:
               return MaterialPageRoute(builder: (_) => PopularTvPage());
             case TopRatedTvPage.ROUTE_NAME:

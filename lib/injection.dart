@@ -26,6 +26,7 @@ import 'package:ditonton/domain/usecases/search_tv.dart';
 import 'package:ditonton/presentation/provider/movie_detail_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_search_notifier.dart';
+import 'package:ditonton/presentation/provider/on_air_tv_notifier.dart';
 import 'package:ditonton/presentation/provider/popular_movies_notifier.dart';
 import 'package:ditonton/presentation/provider/popular_tv_notifier.dart';
 import 'package:ditonton/presentation/provider/top_rated_movies_notifier.dart';
@@ -83,6 +84,11 @@ void init() {
       getOnAirTv: locator(),
       getPopularTv: locator(),
       getTopRatedTv: locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => OnAirTvNotifier(
+      locator(),
     ),
   );
   locator.registerFactory(
