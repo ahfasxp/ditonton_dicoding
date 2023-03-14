@@ -1,8 +1,7 @@
-import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/presentation/provider/on_air_tv_notifier.dart';
+import 'package:ditonton/presentation/bloc/on_air_tv_bloc.dart';
 import 'package:ditonton/presentation/widgets/tv_card_list.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OnAirTvPage extends StatefulWidget {
   static const ROUTE_NAME = '/on-air-tv';
@@ -15,8 +14,9 @@ class _OnAirTvPageState extends State<OnAirTvPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<OnAirTvNotifier>(context, listen: false).fetchOnAirTv());
+    Future.microtask(
+      () => context.read<OnAirTvBloc>().add(GetOnAirTvEvent()),
+    );
   }
 
   @override
@@ -27,25 +27,26 @@ class _OnAirTvPageState extends State<OnAirTvPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Consumer<OnAirTvNotifier>(
-          builder: (context, data, child) {
-            if (data.state == RequestState.Loading) {
-              return Center(
+        child: BlocBuilder<OnAirTvBloc, OnAirTvState>(
+          builder: (context, state) {
+            if (state is OnAirTvLoading) {
+              return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (data.state == RequestState.Loaded) {
+            } else if (state is OnAirTvEmpty) {
+              return const Text('Not Found');
+            } else if (state is OnAirTvHasData) {
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  final tv = data.listTv[index];
+                  final tv = state.onAirTv[index];
                   return TvCard(tv);
                 },
-                itemCount: data.listTv.length,
+                itemCount: state.onAirTv.length,
               );
+            } else if (state is OnAirTvError) {
+              return Text(state.message);
             } else {
-              return Center(
-                key: Key('error_message'),
-                child: Text(data.message),
-              );
+              return SizedBox();
             }
           },
         ),
