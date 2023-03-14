@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:ditonton/domain/entities/movie.dart';
 import 'package:ditonton/domain/entities/movie_detail.dart';
+import 'package:ditonton/domain/usecases/get_watchlist_movies.dart';
 import 'package:ditonton/domain/usecases/get_watchlist_status.dart';
 import 'package:ditonton/domain/usecases/remove_watchlist.dart';
 import 'package:ditonton/domain/usecases/save_watchlist.dart';
@@ -13,9 +15,10 @@ class WatchlistMovieBloc
   final GetWatchListStatus _getWatchListStatus;
   final SaveWatchlist _saveWatchlist;
   final RemoveWatchlist _removeWatchlist;
+  final GetWatchlistMovies _getWatchlistMovies;
 
-  WatchlistMovieBloc(
-      this._getWatchListStatus, this._saveWatchlist, this._removeWatchlist)
+  WatchlistMovieBloc(this._getWatchListStatus, this._saveWatchlist,
+      this._removeWatchlist, this._getWatchlistMovies)
       : super(WatchlistMovieInitial()) {
     on<LoadWatchlistMovieStatus>((event, emit) async {
       emit(LoadWatchlistMovieStatusLoading());
@@ -52,6 +55,25 @@ class WatchlistMovieBloc
         },
         (movieData) {
           emit(DeleteWatchlistMovieHasData(movieData));
+        },
+      );
+    });
+
+    on<GetWatchlistMoviesEvent>((event, emit) async {
+      emit(GetWatchlistMoviesLoading());
+
+      final watchlistMovie = await _getWatchlistMovies.execute();
+
+      watchlistMovie.fold(
+        (failure) {
+          emit(GetWatchlistMoviesError(failure.message));
+        },
+        (moviesData) {
+          if (moviesData.isEmpty) {
+            emit(GetWatchlistMoviesEmpty());
+          } else {
+            emit(GetWatchlistMoviesHasData(moviesData));
+          }
         },
       );
     });

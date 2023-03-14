@@ -71,3 +71,26 @@ class DeleteWatchlistMovieError extends WatchlistMovieState {
   @override
   List<Object> get props => [message];
 }
+
+// GetWatchlistMovies
+class GetWatchlistMoviesLoading extends WatchlistMovieState {}
+
+class GetWatchlistMoviesEmpty extends WatchlistMovieState {}
+
+class GetWatchlistMoviesHasData extends WatchlistMovieState {
+  final List<Movie> movies;
+
+  const GetWatchlistMoviesHasData(this.movies);
+
+  @override
+  List<Object> get props => [movies];
+}
+
+class GetWatchlistMoviesError extends WatchlistMovieState {
+  final String message;
+
+  const GetWatchlistMoviesError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
