@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- START Crashlytics Configuration (Only Debug Mode) -->
+	<key>NSBonjourServices</key>
+    <array>
+        <string>_dartobservatory._tcp</string>
+    </array>
+	<!-- END Crashlytics Configuration (Only Debug Mode) -->
 </dict>
 </plist>
